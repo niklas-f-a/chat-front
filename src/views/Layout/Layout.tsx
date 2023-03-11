@@ -4,7 +4,10 @@ import SideBar from "../../components/SideBar"
 import ChatRoom from "../../components/ChatRoom"
 import * as S from './styled'
 
+
 const Layout = () => {
+
+
   return (
     <S.Main>
       <ServersBar />
