@@ -5,14 +5,14 @@ type FetcherTypes = {
 
 type QueryDetails = {
   body?: any;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 };
 
 export type Fetcher = {
-  get: (endpoint: string) => void;
-  post: (endpoint: string, { body }: QueryDetails) => Promise<Response>;
-  del: (endpoint: string, { body }: QueryDetails) => void;
-  update: (endpoint: string, { body }: QueryDetails) => void;
+  get: <T>(endpoint: string) => Promise<T>;
+  post: <T>(endpoint: string, { body }: QueryDetails) => Promise<T>;
+  del: <T>(endpoint: string, { body }: QueryDetails) => Promise<T>;
+  update: <T>(endpoint: string, { body }: QueryDetails) => Promise<T>;
 };
 
 export const fetcher = ({

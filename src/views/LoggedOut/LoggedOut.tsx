@@ -10,29 +10,24 @@ import { Form, FormWrapper } from "./styled"
 type ChangeEvent = React.ChangeEvent<HTMLInputElement>
 
 const LoggedOut: React.FC = () => {
-  // const { isLoading, error, data, refetch } = useQuery({
-  //   queryKey: ['auth'],
-  //   queryFn: get,
-  //   refetchOnWindowFocus: false,
-  //   enabled: false
-  // })
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoginForm, setIsLoginForm] = useState(true)
 
-  async function login() {
-    return await api.auth.signup({ email, password })
+  const login = async () => await api.auth.signup({ email, password })
 
-    // const data = await res.json()
-    // return data
-  }
+  const signup = async () => await api.auth.login({ email, password })
+
+  const { isLoading, error, data, refetch } = useQuery({
+    queryKey: ['auth'],
+    queryFn: isLoginForm ? signup : login,
+    refetchOnWindowFocus: false,
+    enabled: false
+  })
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // refetch()
-    const data = await login()
-    // console.log(data)
+    refetch()
   }
 
   const toggleForm = () => setIsLoginForm(!isLoginForm)
