@@ -1,18 +1,3 @@
-// export class Fetcher {
-//   constructor(private some: string){}
-
-//   post(){
-
-//   }
-
-//   get(){
-
-//   }
-
-//   delete(){
-
-//   }
-// }
 type FetcherTypes = {
   baseUrl: string;
   headers?: HeadersInit | undefined;
@@ -20,14 +5,14 @@ type FetcherTypes = {
 
 type QueryDetails = {
   body?: any;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 };
 
 export type Fetcher = {
   get: (endpoint: string) => void;
   post: (endpoint: string, { body }: QueryDetails) => Promise<Response>;
-  del: () => void;
-  update: () => void;
+  del: (endpoint: string, { body }: QueryDetails) => void;
+  update: (endpoint: string, { body }: QueryDetails) => void;
 };
 
 export const fetcher = ({
@@ -35,8 +20,8 @@ export const fetcher = ({
   headers = { 'Content-Type': 'application/json' },
 }: FetcherTypes): Fetcher => {
   const fetchData = async (
-    endPoint = '',
-    { body, method = 'GET' }: QueryDetails = {}
+    endPoint: string,
+    { body, method }: QueryDetails
   ) => {
     const res = await fetch(baseUrl + endPoint, {
       method,
@@ -46,14 +31,17 @@ export const fetcher = ({
     return await res.json();
   };
 
-  const get = (endpoint: string) => {
-    fetchData(endpoint);
-  };
-  const post = async (endpoint: string, { body }: QueryDetails) => {
-    return await fetchData(endpoint, { body, method: 'POST' });
-  };
-  const del = () => {};
-  const update = () => {};
+  const get = async <T>(endpoint: string) =>
+    (await fetchData(endpoint, { method: 'GET' })) as T;
+
+  const post = async <T>(endpoint: string, { body }: QueryDetails) =>
+    (await fetchData(endpoint, { body, method: 'POST' })) as T;
+
+  const del = async <T>(endpoint: string, { body }: QueryDetails) =>
+    (await fetchData(endpoint, { body, method: 'DELETE' })) as T;
+
+  const update = async <T>(endpoint: string, { body }: QueryDetails) =>
+    (await fetchData(endpoint, { body, method: 'PATCH' })) as T;
 
   return { get, post, del, update };
 };
