@@ -1,8 +1,9 @@
 import { Fetcher } from './Fetcher';
 
 export const auth = (fetcher: Fetcher) => ({
-  signup: (cred: { email: string; password: string }) =>
-    fetcher.post<{ _id: string }>('/signup', { body: cred }), // update return type
+  signup: async (cred: { email: string; password: string }) =>
+    fetcher.post('/signup', { body: cred }), // update return type
   login: (cred: { email: string; password: string }) =>
-    fetcher.post<{ _id: string }>('/login', { body: cred }), // update return type
+    fetcher.post('/login', { body: cred }), // update return type
+  status: () => fetcher.get('/status'),
 });

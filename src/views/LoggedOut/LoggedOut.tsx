@@ -14,15 +14,21 @@ const LoggedOut: React.FC = () => {
   const [password, setPassword] = useState('')
   const [isLoginForm, setIsLoginForm] = useState(true)
 
-  const login = async () => await api.auth.signup({ email, password })
+  const login = async () => {
+    const data = await api.auth.signup({ email, password })
+    console.log(data)
+    return data
+  }
 
-  const signup = async () => await api.auth.login({ email, password })
+  const signup = async () => {
+    return await api.auth.login({ email, password })
+  }
 
   const { isLoading, error, data, refetch } = useQuery({
     queryKey: ['auth'],
     queryFn: isLoginForm ? signup : login,
     refetchOnWindowFocus: false,
-    enabled: false
+    enabled: false,
   })
 
   const submit = async (e: React.FormEvent) => {
@@ -32,6 +38,10 @@ const LoggedOut: React.FC = () => {
 
   const toggleForm = () => setIsLoginForm(!isLoginForm)
 
+  const onStatus = async () => {
+    await api.auth.status()
+  }
+
   const onChangeUsername = (e: ChangeEvent) =>
     setEmail(e.target.value)
 
@@ -40,13 +50,16 @@ const LoggedOut: React.FC = () => {
 
   return (
     <FormWrapper>
+      {data && JSON.stringify(data)}
       <Form onSubmit={submit}>
         <InputField label="Username" onChange={onChangeUsername} />
         <InputField label="Password" type="password" onChange={onChangePassword} />
         <Button label={isLoginForm ? 'Login' : 'SignUp'} type="submit" />
-        {isLoginForm && <div>github login</div>}
         <Link text={isLoginForm ? 'signup' : 'back'} onClick={toggleForm} />
       </Form>
+        {isLoginForm && <div><a href='http://localhost:5001/api/v1/auth/github/login'><Button label="Login to GitHub" />
+</a></div>}
+        {isLoginForm && <div><Button label="Status" onClick={onStatus} /></div>}
     </FormWrapper>
   )
 }

@@ -8,11 +8,17 @@ type QueryDetails = {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 };
 
+type Response<T> = {
+  status: number;
+  ok: boolean;
+  data: T;
+};
+
 export type Fetcher = {
-  get: <T>(endpoint: string) => Promise<T>;
-  post: <T>(endpoint: string, { body }: QueryDetails) => Promise<T>;
-  del: <T>(endpoint: string, { body }: QueryDetails) => Promise<T>;
-  update: <T>(endpoint: string, { body }: QueryDetails) => Promise<T>;
+  get: <T>(endpoint: string) => Promise<Response<T>>;
+  post: <T>(endpoint: string, { body }: QueryDetails) => Promise<Response<T>>;
+  del: <T>(endpoint: string, { body }: QueryDetails) => Promise<Response<T>>;
+  update: <T>(endpoint: string, { body }: QueryDetails) => Promise<Response<T>>;
 };
 
 export const fetcher = ({
@@ -26,22 +32,29 @@ export const fetcher = ({
     const res = await fetch(baseUrl + endPoint, {
       method,
       headers,
+      credentials: 'include',
       body: JSON.stringify(body),
     });
-    return await res.json();
+    const { status, ok } = res;
+
+    return {
+      status,
+      ok,
+      data: await res.json(),
+    };
   };
 
-  const get = async <T>(endpoint: string) =>
-    (await fetchData(endpoint, { method: 'GET' })) as T;
+  const get = async (endpoint: string) =>
+    await fetchData(endpoint, { method: 'GET' });
 
-  const post = async <T>(endpoint: string, { body }: QueryDetails) =>
-    (await fetchData(endpoint, { body, method: 'POST' })) as T;
+  const post = async (endpoint: string, { body }: QueryDetails) =>
+    await fetchData(endpoint, { body, method: 'POST' });
 
-  const del = async <T>(endpoint: string, { body }: QueryDetails) =>
-    (await fetchData(endpoint, { body, method: 'DELETE' })) as T;
+  const del = async (endpoint: string, { body }: QueryDetails) =>
+    await fetchData(endpoint, { body, method: 'DELETE' });
 
-  const update = async <T>(endpoint: string, { body }: QueryDetails) =>
-    (await fetchData(endpoint, { body, method: 'PATCH' })) as T;
+  const update = async (endpoint: string, { body }: QueryDetails) =>
+    await fetchData(endpoint, { body, method: 'PATCH' });
 
   return { get, post, del, update };
 };
