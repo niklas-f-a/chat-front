@@ -1,20 +1,18 @@
-import { useQuery } from "@tanstack/react-query"
 import Layout from "./views/Layout"
 import LoggedOut from "./views/LoggedOut"
+import { useAuth } from './hooks'
 
 export type UserCred = {
   username: string,
   password: string,
 }
 
-
-
 const App = () => {
+  const { isLoggedIn } = useAuth()
 
-  const loggedOut = true
-  return loggedOut
-      ? <LoggedOut />
-      :  <Layout />
+  return isLoggedIn
+    ?  <Layout />
+    : <LoggedOut />
 
 
 }
