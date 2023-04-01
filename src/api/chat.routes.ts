@@ -1,7 +1,8 @@
+import { ChatSpace, ChatSpaces } from '../hooks/useChatRooms';
 import { Fetcher } from './Fetcher';
 
 export const chat = (fetcher: Fetcher) => ({
-  getRooms: () => fetcher.get('/status'),
+  getRooms: () => fetcher.get<ChatSpaces>('/chat'),
   create: (chatRoomName: string) =>
-    fetcher.post('/chat', { body: chatRoomName }),
+    fetcher.post<ChatSpace>('/chat', { body: chatRoomName }),
 });
