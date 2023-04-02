@@ -3,6 +3,14 @@ import { useState } from 'react';
 import { api } from '../api';
 import useAuth, { User } from './useAuth';
 
+export type Message = {
+  id: string;
+  content: string;
+  userId: number;
+  createdAt: Date;
+  updateAt: Date;
+};
+
 export type ChatSpace = {
   chatRooms: ChatRooms;
   createdAt: Date;
@@ -21,26 +29,51 @@ export type ChatRoom = {
   id: string;
   name: string;
   updatedAt: Date;
+  messages: Message[];
 };
 
 export type ChatRooms = ChatRoom[];
 
 const useChatRooms = () => {
-  // const [currentSpace, setCurrentSpace] = useState<ChatSpace | null>(null);
-  const { user } = useAuth();
   const queryClient = useQueryClient();
+
   const { data: currentSpace } = useQuery<ChatSpace>(['currentSpace'], {
     enabled: false,
   });
+
+  const { data: chatSpaces } = useQuery(['chatSpace'], {
+    queryFn: getChatSpaces,
+  });
+
   const { data: currentRoom } = useQuery<ChatRoom>(['currentRoom'], {
     enabled: false,
   });
 
-  const getChatRooms = async () => {
-    const { data } = await api.chat.getRooms();
+  const { data: chatRoom } = useQuery<ChatRoom | undefined>(['messages'], {
+    queryFn: getChatRoom,
+    enabled: !!currentRoom?.id,
+  });
+
+  async function getChatSpaces() {
+    const { data } = await api.chat.getSpace();
 
     return data;
-  };
+  }
+
+  async function getChatRoom() {
+    if (!currentRoom) return undefined;
+    console.log(currentRoom);
+    const { data } = await api.chat.getChatRoom(currentRoom.id);
+    console.log(data);
+    return data;
+  }
+
+  // async function getChatRoom(aa: any) {
+  //   console.log(aa);
+  //   const { data } = await api.chat.getChatRoom();
+
+  //   return data;
+  // }
 
   // const createChatRoom = async ({ chatRoomName }: { chatRoomName: string }) => {
   //   const { data } = await api.chat.create(chatRoomName);
@@ -52,19 +85,22 @@ const useChatRooms = () => {
   //   onSuccess: (data) => queryClient.setQueryData(['chatRooms'], data),
   // });
 
-  function setCurrentSpace(chatSpace: ChatSpace) {
-    queryClient.setQueryData(['currentSpace'], chatSpace);
+  function setCurrentSpace(clickedChatSpace: ChatSpace) {
+    queryClient.setQueryData(['currentSpace'], clickedChatSpace);
   }
 
-  function setCurrentRoom(chatSpace: ChatRoom) {
-    queryClient.setQueryData(['currentSpace'], chatSpace);
+  function setCurrentRoom(clickedChatRoom: ChatRoom) {
+    queryClient.setQueryData(['currentRoom'], clickedChatRoom);
   }
 
-  const { data: chatSpaces } = useQuery(['chatRooms'], {
-    queryFn: getChatRooms,
-  });
-
-  return { chatSpaces, setCurrentSpace, currentSpace, setCurrentRoom };
+  return {
+    chatSpaces,
+    setCurrentSpace,
+    currentSpace,
+    setCurrentRoom,
+    currentRoom,
+    chatRoom,
+  };
 };
 
 export default useChatRooms;

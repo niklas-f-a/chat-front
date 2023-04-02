@@ -6,8 +6,6 @@ import * as S from './styled'
 
 
 const Layout = () => {
-
-
   return (
     <S.Main>
       <ServersBar />
