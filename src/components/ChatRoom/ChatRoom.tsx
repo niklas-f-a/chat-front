@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query"
 import { ChatSection } from "./styled"
-import { useChatRooms } from "../../hooks"
+import { useChatRooms, useSocket } from "../../hooks"
 
 const ChatRoom = () => {
   const { chatRoom } = useChatRooms()
+  const { data } = useSocket()
   if(!chatRoom?.messages) return null
   return (
     <ChatSection>
