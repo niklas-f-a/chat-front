@@ -47,12 +47,24 @@ const useAuth = () => {
     queryFn: checkLoginStatus,
   });
 
+  const logout = () => api.auth.logout();
+
+  const mutateLogout = useMutation(logout, {
+    onSuccess: () => {
+      queryClient.setQueryData(['auth'], null);
+      queryClient.removeQueries();
+    },
+  });
+
+  // console.log(user);
+
   return {
     mutateLogin,
     mutateSignup,
     checkLoginStatus,
     isLoggedIn: !!user,
     user,
+    mutateLogout,
   };
 };
 

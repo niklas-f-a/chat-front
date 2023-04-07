@@ -62,9 +62,7 @@ const useChatRooms = () => {
 
   async function getChatRoom() {
     if (!currentRoom) return undefined;
-    console.log(currentRoom);
     const { data } = await api.chat.getChatRoom(currentRoom.id);
-    console.log(data);
     return data;
   }
 

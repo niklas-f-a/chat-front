@@ -16,7 +16,7 @@ type Response<T> = {
 
 export type Fetcher = {
   get: <T>(endpoint: string) => Promise<Response<T>>;
-  post: <T>(endpoint: string, { body }: QueryDetails) => Promise<Response<T>>;
+  post: <T>(endpoint: string, query?: QueryDetails) => Promise<Response<T>>;
   del: <T>(endpoint: string, { body }: QueryDetails) => Promise<Response<T>>;
   update: <T>(endpoint: string, { body }: QueryDetails) => Promise<Response<T>>;
 };
@@ -25,10 +25,9 @@ export const fetcher = ({
   baseUrl,
   headers = { 'Content-Type': 'application/json' },
 }: FetcherTypes): Fetcher => {
-  const fetchData = async (
-    endPoint: string,
-    { body, method }: QueryDetails
-  ) => {
+  const fetchData = async (endPoint: string, query: QueryDetails) => {
+    const { body, method } = query;
+
     const res = await fetch(baseUrl + endPoint, {
       method,
       headers,
@@ -36,19 +35,20 @@ export const fetcher = ({
       body: JSON.stringify(body),
     });
     const { status, ok } = res;
-
+    const aa = await res.json();
+    console.log(aa);
     return {
       status,
       ok,
-      data: await res.json(),
+      data: aa,
     };
   };
 
   const get = async (endpoint: string) =>
     await fetchData(endpoint, { method: 'GET' });
 
-  const post = async (endpoint: string, { body }: QueryDetails) =>
-    await fetchData(endpoint, { body, method: 'POST' });
+  const post = async (endpoint: string, query?: QueryDetails) =>
+    await fetchData(endpoint, { body: query?.body, method: 'POST' });
 
   const del = async (endpoint: string, { body }: QueryDetails) =>
     await fetchData(endpoint, { body, method: 'DELETE' });

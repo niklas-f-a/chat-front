@@ -16,5 +16,6 @@ export const auth = (fetcher: Fetcher) => ({
     if (status !== 201) throw new Error('Something went wrong');
     return data;
   },
+  logout: () => fetcher.post('/auth/logout'),
   status: () => fetcher.get<User>('/auth/status'),
 });

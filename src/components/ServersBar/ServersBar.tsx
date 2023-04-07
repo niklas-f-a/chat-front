@@ -16,11 +16,11 @@ const ServersBar = () => {
     <ServerBar>
       {isCreatingRoom && ( <CreateSpace onCancel={toggleIsCreatingRoom} /> )}
       <button onClick={toggleIsCreatingRoom}>+</button>
-      {chatSpaces && chatSpaces.map(chatSpace => {
+      {chatSpaces && (chatSpaces || []).map(chatSpace => {
         return <div key={chatSpace.id} onClick={() => {
           setCurrentSpace(chatSpace)
           }}>
-          {chatSpace.name}
+          {chatSpace?.name}
         </div>
       })}
     </ServerBar>
