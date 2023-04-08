@@ -35,12 +35,12 @@ export const fetcher = ({
       body: JSON.stringify(body),
     });
     const { status, ok } = res;
-    const aa = await res.json();
-    console.log(aa);
+    const data = await res.json();
+
     return {
       status,
       ok,
-      data: aa,
+      data,
     };
   };
 

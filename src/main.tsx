@@ -7,6 +7,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import StateContextProvider from './context'
 
 const mutationCache = new MutationCache({
   onSettled(data, error, variables, context, mutation) {
@@ -25,7 +26,9 @@ const queryClient = new QueryClient({ mutationCache })
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <StateContextProvider>
+        <App />
+      </StateContextProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 )

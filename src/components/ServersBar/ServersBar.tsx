@@ -1,28 +1,45 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useChatRooms } from '../../hooks'
 import CreateSpace from '../CreateRoom'
 import { ServerBar } from './styled'
+import { StateContext } from '../../context'
 
 const ServersBar = () => {
+  const state = useContext(StateContext)
   const [isCreatingRoom, setIsCreatingRoom] = useState(false)
-  const { chatSpaces, setCurrentSpace } = useChatRooms()
+  const [newSpace, setNewSpace] = useState('')
+  const { chatSpaces, chatSpaceMuation, joinSpaceMutation } = useChatRooms()
 
+  const joinSpace = () => {
+    joinSpaceMutation.mutate(newSpace)
+  }
 
   const toggleIsCreatingRoom = () => {
     setIsCreatingRoom(creatingRoom => !creatingRoom)
   }
 
+  const onCreateSpace = (spaceName: string) => {
+    chatSpaceMuation.mutate(spaceName)
+    toggleIsCreatingRoom()
+  }
+
+  if(!chatSpaces) return
+
   return (
     <ServerBar>
-      {isCreatingRoom && ( <CreateSpace onCancel={toggleIsCreatingRoom} /> )}
+      {isCreatingRoom && ( <CreateSpace onCreateSpace={onCreateSpace} onCancel={toggleIsCreatingRoom} /> )}
       <button onClick={toggleIsCreatingRoom}>+</button>
-      {chatSpaces && (chatSpaces || []).map(chatSpace => {
+      {chatSpaces?.map((chatSpace) => {
         return <div key={chatSpace.id} onClick={() => {
-          setCurrentSpace(chatSpace)
+          state?.setCurrentSpaceId(chatSpace.id)
           }}>
           {chatSpace?.name}
         </div>
       })}
+      <div>
+        <input type="text" onChange={e => setNewSpace(e.target.value)} />
+        <button onClick={joinSpace}>join</button>
+      </div>
     </ServerBar>
   )
 }
