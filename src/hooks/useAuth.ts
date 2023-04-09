@@ -6,6 +6,19 @@ export type Credentials = {
   password: string;
 };
 
+export type FriendRequest = {
+  requester: {
+    _id: string;
+    username: string;
+  };
+  receiver: {
+    _id: string;
+    username: string;
+  };
+  established: boolean;
+  created: Date;
+};
+
 export interface User {
   username: string;
   chatRooms: number[];
@@ -13,6 +26,7 @@ export interface User {
   githubId: null | string;
   photos: string[];
   _id: string;
+  friendRequests: FriendRequest[];
 }
 
 const useAuth = () => {
