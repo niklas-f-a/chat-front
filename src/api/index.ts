@@ -1,5 +1,6 @@
 import { auth } from './auth.routes';
 import { chat } from './chat.routes';
+import { users } from './users.routes';
 import { fetcher } from './Fetcher';
 
 const fetchIns = fetcher({
@@ -9,4 +10,5 @@ const fetchIns = fetcher({
 export const api = {
   auth: auth(fetchIns),
   chat: chat(fetchIns),
+  users: users(fetchIns),
 };

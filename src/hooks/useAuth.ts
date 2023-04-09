@@ -7,6 +7,7 @@ export type Credentials = {
 };
 
 export interface User {
+  username: string;
   chatRooms: number[];
   email: string;
   githubId: null | string;
