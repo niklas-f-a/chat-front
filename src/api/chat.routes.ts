@@ -10,4 +10,6 @@ export const chat = (fetcher: Fetcher) => ({
   getChatRoom: (id: string) => fetcher.get<ChatRoom>(`/chat/rooms/${id}`),
   joinSpace: (id: string) =>
     fetcher.post<ChatSpace>('/chat/join', { body: { chatSpaceId: id } }),
+  getChatSpaceById: (spaceId: string) =>
+    fetcher.get<ChatSpace>(`/chat/${spaceId}`),
 });

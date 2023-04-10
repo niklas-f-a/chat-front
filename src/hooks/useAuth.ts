@@ -16,7 +16,7 @@ export type FriendRequest = {
     username: string;
   };
   established: boolean;
-  created: Date;
+  _id: string;
 };
 
 export interface User {
@@ -27,6 +27,7 @@ export interface User {
   photos: string[];
   _id: string;
   friendRequests: FriendRequest[];
+  personalSpace?: string;
 }
 
 const useAuth = () => {

@@ -8,7 +8,7 @@ const ServersBar = () => {
   const state = useContext(StateContext)
   const [isCreatingRoom, setIsCreatingRoom] = useState(false)
   const [newSpace, setNewSpace] = useState('')
-  const { chatSpaces, chatSpaceMuation, joinSpaceMutation } = useChatRooms()
+  const { chatSpaces, chatSpaceMuation, joinSpaceMutation, personalSpace } = useChatRooms()
 
   const joinSpace = () => {
     joinSpaceMutation.mutate(newSpace)
@@ -29,6 +29,11 @@ const ServersBar = () => {
     <ServerBar>
       {isCreatingRoom && ( <CreateSpace onCreateSpace={onCreateSpace} onCancel={toggleIsCreatingRoom} /> )}
       <button onClick={toggleIsCreatingRoom}>+</button>
+      <div onClick={() => {
+          state?.setCurrentSpaceId(personalSpace?.id as string)
+          }}>
+          {personalSpace?.name}
+      </div>
       {chatSpaces?.map((chatSpace) => {
         return <div key={chatSpace.id} onClick={() => {
           state?.setCurrentSpaceId(chatSpace.id)

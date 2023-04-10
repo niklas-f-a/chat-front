@@ -7,11 +7,19 @@ import { StateContext } from '../context';
 
 const useChatRooms = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const state = useContext(StateContext);
 
   const { data: chatSpaces } = useQuery<ChatSpace[]>(['chatSpace'], {
     queryFn: getChatSpaces,
   });
+
+  const { data: personalSpace } = useQuery<ChatSpace | null>(
+    ['personalSpace'],
+    {
+      queryFn: getPersonalChatSpace,
+    }
+  );
 
   const { data: currentRoom } = useQuery<ChatRoom | undefined>(
     ['chatRoom', state?.currentRoomId],
@@ -28,6 +36,13 @@ const useChatRooms = () => {
   const chatSpaceMuation = useMutation(createSpace, {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['chatSpace'] }),
   });
+
+  async function getPersonalChatSpace() {
+    if (!user?.personalSpace) return null;
+    const { data } = await api.chat.getChatSpaceById(user.personalSpace);
+
+    return data;
+  }
 
   async function getChatSpaces() {
     const { data } = await api.chat.getSpace();
@@ -49,6 +64,7 @@ const useChatRooms = () => {
 
   async function getChatRoom() {
     if (!state?.currentRoomId) return;
+
     const { data } = await api.chat.getChatRoom(state?.currentRoomId);
     return data;
   }
@@ -85,6 +101,7 @@ const useChatRooms = () => {
     chatSpaceMuation,
     findCurrentSpace,
     joinSpaceMutation,
+    personalSpace,
   };
 };
 
