@@ -7,5 +7,5 @@ export const users = (fetcher: Fetcher) => ({
   acceptRequest: (requestId: string) =>
     fetcher.post('/users/friends/accept', { body: { requestId } }),
   sendFriendRequest: (receiver: string) =>
-    fetcher.post('/users/friend-request', { body: { receiver } }),
+    fetcher.post('/users/friends', { body: { receiver } }),
 });

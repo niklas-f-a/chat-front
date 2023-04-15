@@ -1,4 +1,4 @@
-import { ChatRoom, ChatSpace } from '../context/types';
+import { ChatRoom, ChatSpace, PersonalSpace } from '../context/types';
 import { Fetcher } from './Fetcher';
 
 export const chat = (fetcher: Fetcher) => ({
@@ -14,4 +14,6 @@ export const chat = (fetcher: Fetcher) => ({
     }),
   getChatSpaceById: (spaceId: string) =>
     fetcher.get<ChatSpace>(`/chat/${spaceId}`),
+  getPersonalSpace: (id?: string) =>
+    fetcher.get<PersonalSpace>(`/chat/personal/${id}`),
 });

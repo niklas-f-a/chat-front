@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useContext, useState } from 'react';
 import { api } from '../api';
 import useAuth, { User } from './useAuth';
-import { ChatRoom, ChatSpace, Message } from '../context/types';
+import { ChatRoom, ChatSpace, Message, PersonalSpace } from '../context/types';
 import { StateContext } from '../context';
 
 const useChatRooms = () => {
@@ -14,15 +14,13 @@ const useChatRooms = () => {
     queryFn: getChatSpaces,
   });
 
-  const { data: personalSpace } = useQuery<ChatSpace | null>(
-    ['personalSpace'],
-    {
-      queryFn: getPersonalChatSpace,
-    }
-  );
+  const { data: personalSpace } = useQuery<PersonalSpace>(['personalSpace'], {
+    queryFn: getPersonalChatSpace,
+  });
 
   const joinSpaceMutation = useMutation(joinSpace, {
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['chatSpace'] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['personalSpace'] }),
   });
 
   const chatSpaceMuation = useMutation(createSpace, {
@@ -30,8 +28,7 @@ const useChatRooms = () => {
   });
 
   async function getPersonalChatSpace() {
-    if (!user?.personalSpace) return null;
-    const { data } = await api.chat.getChatSpaceById(user.personalSpace);
+    const { data } = await api.chat.getPersonalSpace(user?.personalSpace);
 
     return data;
   }

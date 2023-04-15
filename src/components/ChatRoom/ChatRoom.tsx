@@ -13,25 +13,6 @@ const socket = io('http://localhost:5050', {
     autoConnect: false,
   });
 
-const MyChat = () => {
-  const { user } = useAuth();
-
-  const friends = user?.friendRequests.filter(friend => friend.established)
-
-  const getFriend = (friend: FriendRequest) => {
-    return user?._id === friend.receiver._id ? friend.requester : friend.receiver
-  }
-
-  return (
-    <div>
-      <h2>my chat</h2>
-      {friends?.map(friend => {
-        return <span key={friend._id}>{getFriend(friend).username}</span>
-      })}
-    </div>
-  )
-}
-
 const ChatRoom = () => {
   const chatSectionRef = useRef<HTMLElement>(null)
   const queryClient = useQueryClient();
@@ -51,8 +32,6 @@ const ChatRoom = () => {
   );
 
   async function getChatRoom() {
-    console.log('room id', state?.currentRoomId);
-
     if(!state?.currentRoomId) return
     const { data } = await api.chat.getChatRoom(state.currentRoomId);
 
@@ -65,8 +44,6 @@ const ChatRoom = () => {
         messages: [...cacheData?.messages, message],
       })
     );
-
-
   };
 
   useEffect(() => {
@@ -87,8 +64,6 @@ const ChatRoom = () => {
     })
 
     socket.on('received-message', (data) => {
-      console.log('data');
-
       addMessage(data)
     });
 
@@ -99,18 +74,28 @@ const ChatRoom = () => {
     };
   }, [user?._id]);
 
-  const isUserSpace = (user as User)?._id === state?.currentSpaceId
-
-  if(!currentRoom || !isConnected) return <p>Not connected</p>
+  const isYourSpace = state?.currentSpaceId === user?.personalSpace
 
   const sendMessage = () => {
     const roomId = currentRoom?.id ?? user?._id
     socket.emit('send-message', { roomId: roomId, content: message});
   };
 
+  const friends = user?.friendRequests.filter(friend => friend.established)
 
-  return isUserSpace
-    ? <MyChat />
+  const getFriend = (friend: FriendRequest) => {
+    return user?._id === friend.receiver._id ? friend.requester : friend.receiver
+  }
+
+  return isYourSpace || !currentRoom
+    ? (
+      <div>
+        <h2>my chat</h2>
+        {friends?.map(friend => {
+          return <span key={friend._id}>{getFriend(friend).username}</span>
+        })}
+      </div>
+    )
     : (
       <ChatSection ref={chatSectionRef}>
       {currentRoom?.messages && currentRoom.messages.map(message => (

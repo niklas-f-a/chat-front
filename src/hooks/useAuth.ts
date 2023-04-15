@@ -72,8 +72,6 @@ const useAuth = () => {
     },
   });
 
-  // console.log(user);
-
   return {
     mutateLogin,
     mutateSignup,

@@ -28,7 +28,7 @@ const ServersBar = () => {
       <div onClick={() => {
           state?.setCurrentSpaceId(personalSpace?.id as string)
           }}>
-          {personalSpace?.name}
+          Your space
       </div>
       {chatSpaces?.map((chatSpace) => {
         return <div key={chatSpace.id} onClick={() => {

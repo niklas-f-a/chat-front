@@ -64,7 +64,6 @@ function App() {
     e.preventDefault()
     axios.post('http://127.0.0.1:5001/api/v1/auth/signup', { email, password }, { withCredentials: true })
       .then(res => {
-        console.log(res)
         setSome(res.data)
       })
   }
