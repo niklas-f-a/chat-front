@@ -60,15 +60,11 @@ const ChatRoom = () => {
   }
 
   const addMessage = async (message: Message) => {
-    await queryClient.setQueryData(['currentChatRoom'], (cacheData: any) => {
-      console.log('cacheData', cacheData);
-      console.log('message', message);
-
-      return {
+    await queryClient.setQueryData(['currentChatRoom'], (cacheData: any) => ({
         ...cacheData,
         messages: [...cacheData?.messages, message],
-      };
-    });
+      })
+    );
 
 
   };
