@@ -1,9 +1,12 @@
 import { ChatSection } from "./styled"
 import { useAuth, useChatRooms } from "../../hooks"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { Socket, io } from "socket.io-client"
 import { FriendRequest, User } from "../../hooks/useAuth";
 import { StateContext } from "../../context";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "../../api";
+import { Message } from "../../context/types";
 
 const socket = io('http://localhost:5050', {
     withCredentials: true,
@@ -30,11 +33,51 @@ const MyChat = () => {
 }
 
 const ChatRoom = () => {
+  const chatSectionRef = useRef<HTMLElement>(null)
+  const queryClient = useQueryClient();
   const [message, setMessage] = useState('')
   const [isConnected, setIsConnected] = useState(false)
   const { user } = useAuth();
-  const { currentRoom, addMessage } = useChatRooms();
   const state = useContext(StateContext)
+
+  const { data: currentRoom } = useQuery(
+    ['currentChatRoom'],
+    {
+      queryFn: getChatRoom,
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!state?.currentRoomId,
+    }
+  );
+
+  async function getChatRoom() {
+    console.log('room id', state?.currentRoomId);
+
+    if(!state?.currentRoomId) return
+    const { data } = await api.chat.getChatRoom(state.currentRoomId);
+
+    return data;
+  }
+
+  const addMessage = async (message: Message) => {
+    await queryClient.setQueryData(['currentChatRoom'], (cacheData: any) => {
+      console.log('cacheData', cacheData);
+      console.log('message', message);
+
+      return {
+        ...cacheData,
+        messages: [...cacheData?.messages, message],
+      };
+    });
+
+
+  };
+
+  useEffect(() => {
+    if(chatSectionRef.current){
+      chatSectionRef.current.scrollTop = chatSectionRef.current.scrollHeight
+    }
+  }, [currentRoom?.messages])
 
 
   useEffect(() => {
@@ -48,11 +91,14 @@ const ChatRoom = () => {
     })
 
     socket.on('received-message', (data) => {
+      console.log('data');
+
       addMessage(data)
     });
 
     return () => {
       setIsConnected(false)
+      socket.off('received-message')
       socket.disconnect();
     };
   }, [user?._id]);
@@ -70,8 +116,8 @@ const ChatRoom = () => {
   return isUserSpace
     ? <MyChat />
     : (
-      <ChatSection>
-      {currentRoom?.messages.map(message => (
+      <ChatSection ref={chatSectionRef}>
+      {currentRoom?.messages && currentRoom.messages.map(message => (
         <div key={message.id}>
           <p>{message.content}</p>
         </div>

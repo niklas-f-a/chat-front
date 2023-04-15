@@ -21,14 +21,6 @@ const useChatRooms = () => {
     }
   );
 
-  const { data: currentRoom } = useQuery<ChatRoom | undefined>(
-    ['chatRoom', state?.currentRoomId],
-    {
-      queryFn: getChatRoom,
-      enabled: !!state?.currentRoomId,
-    }
-  );
-
   const joinSpaceMutation = useMutation(joinSpace, {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['chatSpace'] }),
   });
@@ -50,8 +42,8 @@ const useChatRooms = () => {
     return data;
   }
 
-  async function joinSpace(id: string) {
-    const { data } = await api.chat.joinSpace(id);
+  async function joinSpace({ id, userId }: { id: string; userId: string }) {
+    const { data } = await api.chat.joinSpace(id, userId);
 
     return data;
   }
@@ -62,26 +54,9 @@ const useChatRooms = () => {
     return data;
   }
 
-  async function getChatRoom() {
-    if (!state?.currentRoomId) return;
-
-    const { data } = await api.chat.getChatRoom(state?.currentRoomId);
-    return data;
-  }
-
   const findCurrentSpace = () => {
     if (!state?.currentSpaceId) return;
     return chatSpaces?.find((space) => space.id === state?.currentSpaceId);
-  };
-
-  const addMessage = (message: Message) => {
-    queryClient.setQueryData(
-      ['chatRoom', state?.currentRoomId],
-      (cacheData: any) => ({
-        ...cacheData,
-        messages: [...cacheData.messages, message],
-      })
-    );
   };
 
   // const createChatRoom = async ({ chatRoomName }: { chatRoomName: string }) => {
@@ -95,8 +70,6 @@ const useChatRooms = () => {
   // });
 
   return {
-    addMessage,
-    currentRoom,
     chatSpaces,
     chatSpaceMuation,
     findCurrentSpace,

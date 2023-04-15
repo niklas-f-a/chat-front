@@ -8,11 +8,7 @@ const ServersBar = () => {
   const state = useContext(StateContext)
   const [isCreatingRoom, setIsCreatingRoom] = useState(false)
   const [newSpace, setNewSpace] = useState('')
-  const { chatSpaces, chatSpaceMuation, joinSpaceMutation, personalSpace } = useChatRooms()
-
-  const joinSpace = () => {
-    joinSpaceMutation.mutate(newSpace)
-  }
+  const { chatSpaces, chatSpaceMuation, personalSpace } = useChatRooms()
 
   const toggleIsCreatingRoom = () => {
     setIsCreatingRoom(creatingRoom => !creatingRoom)
@@ -41,10 +37,6 @@ const ServersBar = () => {
           {chatSpace?.name}
         </div>
       })}
-      <div>
-        <input type="text" onChange={e => setNewSpace(e.target.value)} />
-        <button onClick={joinSpace}>join</button>
-      </div>
     </ServerBar>
   )
 }

@@ -135,6 +135,8 @@ const NavBar = () => {
   const incomingFriends = getFriendsInvitations()
   const outgoingFriends = getFriendRequests()
 
+  console.log(user?.friendRequests);
+
 
   return (
     <Nav>
