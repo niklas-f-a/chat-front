@@ -20,13 +20,14 @@ const ChatRoom = () => {
   const [isConnected, setIsConnected] = useState(false)
   const { user } = useAuth();
   const state = useContext(StateContext)
+  const { findCurrentSpace } = useChatRooms()
+  const isYourSpace = state?.currentSpaceId === user?.personalSpace
+
 
   const { data: currentRoom } = useQuery(
     ['currentChatRoom'],
     {
       queryFn: getChatRoom,
-      cacheTime: Infinity,
-      staleTime: Infinity,
       enabled: !!state?.currentRoomId,
     }
   );
@@ -47,11 +48,19 @@ const ChatRoom = () => {
   };
 
   useEffect(() => {
+    const space = findCurrentSpace()
+    if(!space) {
+      state?.setCurrentRoomId('')
+    } else {
+      state?.setCurrentRoomId(space.chatRooms[0].id)
+    }
+  }, [state?.currentSpaceId])
+
+  useEffect(() => {
     if(chatSectionRef.current){
       chatSectionRef.current.scrollTop = chatSectionRef.current.scrollHeight
     }
   }, [currentRoom?.messages])
-
 
   useEffect(() => {
     if (!user?._id) return;
@@ -64,6 +73,8 @@ const ChatRoom = () => {
     })
 
     socket.on('received-message', (data) => {
+      console.log(data);
+
       addMessage(data)
     });
 
@@ -74,7 +85,6 @@ const ChatRoom = () => {
     };
   }, [user?._id]);
 
-  const isYourSpace = state?.currentSpaceId === user?.personalSpace
 
   const sendMessage = () => {
     const roomId = currentRoom?.id ?? user?._id
@@ -91,9 +101,15 @@ const ChatRoom = () => {
     ? (
       <div>
         <h2>my chat</h2>
-        {friends?.map(friend => {
-          return <span key={friend._id}>{getFriend(friend).username}</span>
-        })}
+        {state?.currentRoomId && currentRoom?.messages && currentRoom.messages.map(message => (
+        <div key={message.id}>
+          <p>{message.content}</p>
+        </div>
+      ))}
+        <div style={{ position: "absolute", bottom: 0 }}>
+        <input  type="text" onChange={e => setMessage(e.target.value)} />
+        <button onClick={sendMessage}>send</button>
+      </div>
       </div>
     )
     : (

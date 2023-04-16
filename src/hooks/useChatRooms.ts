@@ -56,16 +56,6 @@ const useChatRooms = () => {
     return chatSpaces?.find((space) => space.id === state?.currentSpaceId);
   };
 
-  // const createChatRoom = async ({ chatRoomName }: { chatRoomName: string }) => {
-  //   const { data } = await api.chat.create(chatRoomName);
-
-  //   return data;
-  // };
-
-  // const chatRoomMutation = useMutation(createChatRoom, {
-  //   onSuccess: (data) => queryClient.setQueryData(['chatRooms'], data),
-  // });
-
   return {
     chatSpaces,
     chatSpaceMuation,

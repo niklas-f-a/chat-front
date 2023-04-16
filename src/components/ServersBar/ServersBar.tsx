@@ -26,13 +26,13 @@ const ServersBar = () => {
       {isCreatingRoom && ( <CreateSpace onCreateSpace={onCreateSpace} onCancel={toggleIsCreatingRoom} /> )}
       <button onClick={toggleIsCreatingRoom}>+</button>
       <div onClick={() => {
-          state?.setCurrentSpaceId(personalSpace?.id as string)
+          state?.switchSpace(personalSpace?.id as string)
           }}>
           Your space
       </div>
       {chatSpaces?.map((chatSpace) => {
         return <div key={chatSpace.id} onClick={() => {
-          state?.setCurrentSpaceId(chatSpace.id)
+          state?.switchSpace(chatSpace.id)
           }}>
           {chatSpace?.name}
         </div>
