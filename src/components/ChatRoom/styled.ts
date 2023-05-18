@@ -5,4 +5,5 @@ export const ChatSection = styled.section`
   grid-area: ChatRoom;
   overflow: scroll;
   padding-bottom: 4rem;
+  height: 100%;
 `;
