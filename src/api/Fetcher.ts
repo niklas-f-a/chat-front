@@ -44,16 +44,15 @@ export const fetcher = ({
     };
   };
 
-  const get = async (endpoint: string) =>
-    fetchData(endpoint, { method: 'GET' });
+  const get = (endpoint: string) => fetchData(endpoint, { method: 'GET' });
 
-  const post = async (endpoint: string, { body }: QueryDetails) =>
+  const post = (endpoint: string, { body }: QueryDetails) =>
     fetchData(endpoint, { body, method: 'POST' });
 
-  const del = async (endpoint: string, { body }: QueryDetails) =>
+  const del = (endpoint: string, { body }: QueryDetails) =>
     fetchData(endpoint, { body, method: 'DELETE' });
 
-  const update = async (endpoint: string, { body }: QueryDetails) =>
+  const update = (endpoint: string, { body }: QueryDetails) =>
     fetchData(endpoint, { body, method: 'PATCH' });
 
   return { get, post, del, update };
