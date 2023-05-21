@@ -3,7 +3,7 @@ type FetcherTypes = {
   headers?: HeadersInit | undefined;
 };
 
-type QueryDetails = {
+type ReqDetails = {
   body?: any;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 };
@@ -16,17 +16,17 @@ type Response<T> = {
 
 export type Fetcher = {
   get: <T>(endpoint: string) => Promise<Response<T>>;
-  post: <T>(endpoint: string, { body }: QueryDetails) => Promise<Response<T>>;
-  del: <T>(endpoint: string, { body }: QueryDetails) => Promise<Response<T>>;
-  update: <T>(endpoint: string, { body }: QueryDetails) => Promise<Response<T>>;
+  post: <T>(endpoint: string, { body }: ReqDetails) => Promise<Response<T>>;
+  del: <T>(endpoint: string, { body }: ReqDetails) => Promise<Response<T>>;
+  update: <T>(endpoint: string, { body }: ReqDetails) => Promise<Response<T>>;
 };
 
 export const fetcher = ({
   baseUrl,
   headers = { 'Content-Type': 'application/json' },
 }: FetcherTypes): Fetcher => {
-  const fetchData = async (endPoint: string, query: QueryDetails) => {
-    const { body, method } = query;
+  const fetchData = async (endPoint: string, reqDetails: ReqDetails) => {
+    const { body, method } = reqDetails;
 
     const res = await fetch(baseUrl + endPoint, {
       method,
@@ -46,13 +46,13 @@ export const fetcher = ({
 
   const get = (endpoint: string) => fetchData(endpoint, { method: 'GET' });
 
-  const post = (endpoint: string, { body }: QueryDetails) =>
+  const post = (endpoint: string, { body }: ReqDetails) =>
     fetchData(endpoint, { body, method: 'POST' });
 
-  const del = (endpoint: string, { body }: QueryDetails) =>
+  const del = (endpoint: string, { body }: ReqDetails) =>
     fetchData(endpoint, { body, method: 'DELETE' });
 
-  const update = (endpoint: string, { body }: QueryDetails) =>
+  const update = (endpoint: string, { body }: ReqDetails) =>
     fetchData(endpoint, { body, method: 'PATCH' });
 
   return { get, post, del, update };
