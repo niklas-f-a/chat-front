@@ -10,6 +10,8 @@ const socket = io('http://localhost:5050', {
   autoConnect: false,
 });
 
+const myPeer = new Peer({ host: 'localhost', port: 9000, path: '/' });
+
 type OwnProps = {
   videoRef: HTMLVideoElement | null;
   user: User | null | undefined;
@@ -22,11 +24,6 @@ const useChat = ({ videoRef, user, roomId }: Props) => {
   const queryClient = useQueryClient();
   const [streamer, setStreamer] = useState('');
   const [stream, setStream] = useState<MediaStream>();
-  // const [myPeer, setMyPeer] = useState<Peer | null>(null);
-  let myPeer = useRef<Peer | null>(
-    new Peer({ host: 'localhost', port: 9000, path: '/' })
-  ).current;
-
   const [myPeerID, setMyPeerID] = useState<string | null>(
     () => myPeer?.id || null
   );
@@ -36,8 +33,6 @@ const useChat = ({ videoRef, user, roomId }: Props) => {
       myPeer.disconnect();
       myPeer.destroy();
     }
-    myPeer = null;
-    // setMyPeer(null);
     setMyPeerID(null);
   };
 
@@ -69,12 +64,6 @@ const useChat = ({ videoRef, user, roomId }: Props) => {
       myPeer.on('call', (call) => {
         console.log('calling' + call.peer);
 
-        navigator.mediaDevices
-          .getUserMedia({ audio: true, video: true })
-          .then((stream) => {
-            call.answer(stream);
-          });
-
         call.on('stream', (remoteStream) => {
           videoRef.srcObject = remoteStream;
         });
@@ -102,32 +91,24 @@ const useChat = ({ videoRef, user, roomId }: Props) => {
     return cleanUp;
   }, [roomId, videoRef, myPeer]);
 
-  // const connectUser = (id: string) => {
-  //   if (peer && stream) {
-  //     const call = peer.call(id, stream);
-  //   }
-  // };
-
-  const watchStream = () => {
-    //   socket.emit('see-stream', { roomId, peerId: myPeerID });
-  };
+  const watchStream = () => {};
 
   const onStream = async () => {
-    //   if (videoRef) {
-    //     try {
-    //       const captureStream = await navigator.mediaDevices.getDisplayMedia({
-    //         video: true,
-    //         audio: true,
-    //       });
-    //       setStream(captureStream);
-    //       videoRef.srcObject = captureStream;
-    //       videoRef.addEventListener('loadedmetadata', () => {
-    //         videoRef.play();
-    //       });
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }
+    if (videoRef) {
+      try {
+        const captureStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: true,
+        });
+        setStream(captureStream);
+        videoRef.srcObject = captureStream;
+        videoRef.addEventListener('loadedmetadata', videoRef.play);
+
+        // myPeer?.call() // someone
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   const sendMessage = (content: string) => {
