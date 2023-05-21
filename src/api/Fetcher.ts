@@ -46,8 +46,8 @@ export const fetcher = ({
 
   const get = (endpoint: string) => fetchData(endpoint, { method: 'GET' });
 
-  const post = (endpoint: string, { body }: ReqDetails) =>
-    fetchData(endpoint, { body, method: 'POST' });
+  const post = (endpoint: string, reqDetails: ReqDetails) =>
+    fetchData(endpoint, { body: reqDetails?.body, method: 'POST' });
 
   const del = (endpoint: string, { body }: ReqDetails) =>
     fetchData(endpoint, { body, method: 'DELETE' });
