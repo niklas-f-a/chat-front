@@ -45,16 +45,16 @@ export const fetcher = ({
   };
 
   const get = async (endpoint: string) =>
-    await fetchData(endpoint, { method: 'GET' });
+    fetchData(endpoint, { method: 'GET' });
 
   const post = async (endpoint: string, { body }: QueryDetails) =>
-    await fetchData(endpoint, { body, method: 'POST' });
+    fetchData(endpoint, { body, method: 'POST' });
 
   const del = async (endpoint: string, { body }: QueryDetails) =>
-    await fetchData(endpoint, { body, method: 'DELETE' });
+    fetchData(endpoint, { body, method: 'DELETE' });
 
   const update = async (endpoint: string, { body }: QueryDetails) =>
-    await fetchData(endpoint, { body, method: 'PATCH' });
+    fetchData(endpoint, { body, method: 'PATCH' });
 
   return { get, post, del, update };
 };
